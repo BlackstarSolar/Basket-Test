@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace BasketTest.AcceptanceTests.Steps
@@ -6,10 +7,15 @@ namespace BasketTest.AcceptanceTests.Steps
     [Binding]
     public class BasketWithVouchersSteps
     {
+        private Basket _target = new Basket();
+
         [Given(@"I have added the following items to my basket:")]
         public void GivenIHaveAddedTheFollowingToMyBasket(IEnumerable<LineItem> lines)
         {
-            ScenarioContext.Current.Pending();
+            foreach (var line in lines)
+            {
+                _target.Add(line);
+            }
         }
 
         [When(@"I apply (.*)")]
@@ -27,7 +33,7 @@ namespace BasketTest.AcceptanceTests.Steps
         [Then(@"my basket total will be £(.*)")]
         public void ThenMyBasketTotalWillBe(decimal total)
         {
-            ScenarioContext.Current.Pending();
+            _target.Total.Should().Be(total);
         }
 
         [Then(@"I will receive a message ""(.*)""")]

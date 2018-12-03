@@ -11,9 +11,12 @@ namespace BasketTest.AcceptanceTests
         [StepArgumentTransformation]
         public IEnumerable<LineItem> LineItemsTransform(Table itemsTable)
         {
+            var factory = new ItemFactoryStrategyFactory();
+
             foreach (var row in itemsTable.Rows)
             {
-                var item = ItemTransform(row);
+                var name = row["Name"];
+                var item = factory.CreateFromName(name).BuildFromRow(name, row);
                 var quantity = uint.Parse(row["Quantity"], NumberStyles.Number);
                 yield return new LineItem(item, quantity);
             }
@@ -45,5 +48,55 @@ namespace BasketTest.AcceptanceTests
         {
             return new OfferVoucher(code, discount, basketTotalThreshold);
         }
+
+        private class ItemFactoryStrategyFactory
+        {
+            public IItemFactory CreateFromName(string name)
+            {
+                name = name.ToUpperInvariant();
+                switch (name)
+                {
+                    case "GIFT VOUCHER": return new GiftVoucherFactory();
+                    default: return new StandardItemFactory();
+                }
+            }
+        }
+
+        private interface IItemFactory
+        {
+            Item BuildFromRow(string name, TableRow row);
+        }
+
+        private class StandardItemFactory : IItemFactory
+        {
+            public virtual Item BuildFromRow(string name, TableRow row)
+            {
+                var price = ParsePrice(row);
+                var category = ExtractCategory(row);
+                return new Item(name, price, category);
+            }
+
+            private static string ExtractCategory(TableRow row)
+            {
+                return row.ContainsKey("Category") ? row["Category"] : null;
+            }
+
+            protected static decimal ParsePrice(TableRow row)
+            {
+                return decimal.Parse(row["Price"],
+                    NumberStyles.AllowCurrencySymbol | NumberStyles.Currency);
+            }
+        }
+
+        private class GiftVoucherFactory : StandardItemFactory
+        {
+            public override Item BuildFromRow(string name, TableRow row)
+            {
+                var price = ParsePrice(row);
+                return new BasketTest.GiftVoucher(name, price);
+            }
+        }
     }
+
+    
 }

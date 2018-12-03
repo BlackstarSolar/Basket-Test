@@ -1,15 +1,18 @@
 ﻿namespace BasketTest
 {
-    public class GiftVoucher
+    public class GiftVoucher : Item
     {
-        public GiftVoucher(string code, decimal amount)
+        public GiftVoucher(string code, decimal amount) : base("Gift Voucher", amount)
         {
             Code = code;
-            Amount = amount;
         }
 
         public string Code { get; }
 
-        public decimal Amount { get; }
+        public decimal Amount => Price;
+
+        public override bool IsDiscountable => false;
+
+        public override bool CanRedeemGiftVouchersAgainst => false;
     }
 }

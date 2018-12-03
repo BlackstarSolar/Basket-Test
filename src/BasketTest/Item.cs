@@ -18,5 +18,9 @@ namespace BasketTest
         public decimal Price { get; }
 
         public IEnumerable<string> Categories { get; }
+
+        public virtual bool IsDiscountable => true;
+
+        public virtual bool CanRedeemGiftVouchersAgainst => true;
     }
 }

@@ -27,7 +27,7 @@ namespace BasketTest.AcceptanceTests.Steps
         [When(@"I apply (.*)")]
         public void WhenIApply(OfferVoucher voucher)
         {
-            ScenarioContext.Current.Pending();
+            _target.Apply(voucher);
         }
 
         [Then(@"my basket total will be £(.*)")]
@@ -39,7 +39,7 @@ namespace BasketTest.AcceptanceTests.Steps
         [Then(@"I will receive a message ""(.*)""")]
         public void ThenIWillReceiveAMessage(string message)
         {
-            ScenarioContext.Current.Pending();
+            _target.Messages.Should().HaveCount(1).And.Contain(message);
         }
     }
 }

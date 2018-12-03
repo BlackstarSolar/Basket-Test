@@ -16,5 +16,7 @@
         public Item Item { get; }
 
         public uint Quantity { get; set; }
+
+        public decimal Price => Item.Price * Quantity;
     }
 }

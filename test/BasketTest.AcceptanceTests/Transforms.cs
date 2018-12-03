@@ -46,7 +46,7 @@ namespace BasketTest.AcceptanceTests
         [StepArgumentTransformation(@"(?:[a\d]\s)?£(\d{1,}\.\d{2})\soff\s([\w\s]+)\sin\sbaskets\sover\s£(\d{1,}\.\d{2})\sOffer\sVoucher\s(\w{3}-\w{3})")]
         public OfferVoucher OfferVoucherWithRestrictionTransform(decimal discount, string restriction, decimal basketTotalThreshold, string code)
         {
-            return new OfferVoucher(code, discount, basketTotalThreshold);
+            return new OfferVoucher(code, discount, basketTotalThreshold, restriction);
         }
 
         private class ItemFactoryStrategyFactory

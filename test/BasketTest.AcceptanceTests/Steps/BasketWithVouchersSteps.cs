@@ -21,7 +21,7 @@ namespace BasketTest.AcceptanceTests.Steps
         [When(@"I apply (.*)")]
         public void WhenIApply(GiftVoucher voucher)
         {
-            ScenarioContext.Current.Pending();
+            _target.Apply(voucher);
         }
 
         [When(@"I apply (.*)")]

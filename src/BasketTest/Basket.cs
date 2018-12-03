@@ -7,6 +7,9 @@ namespace BasketTest
     public class Basket
     {
         private readonly IList<LineItem> _lines = new List<LineItem>();
+
+        private readonly IList<GiftVoucher> _giftVouchers = new List<GiftVoucher>();
+
         public Basket()
         {
             Changed += Basket_Changed;
@@ -43,9 +46,31 @@ namespace BasketTest
             OnChanged(new EventArgs());
         }
 
+        public void Apply(GiftVoucher voucher)
+        {
+            if (voucher == null) return;
+
+            _giftVouchers.Add(voucher);
+
+            OnChanged(new EventArgs());
+        }
+
         private void CalculateTotal()
         {
-            Total = _lines.Sum(l => l.Quantity * l.Item.Price);
+            var giftVoucherReducibleSubTotal = _lines.Where(l => l.Item.CanRedeemGiftVouchersAgainst).Sum(l => CalculatePrice(l));
+
+            var giftVoucherTotal = _giftVouchers.Sum(g => g.Amount);
+
+            var giftVoucherReduction = Math.Min(giftVoucherReducibleSubTotal, giftVoucherTotal);
+
+            var nonGiftVoucherReducibleSubTotal = _lines.Where(l => !l.Item.CanRedeemGiftVouchersAgainst).Sum(l => CalculatePrice(l));
+
+            Total = giftVoucherReducibleSubTotal + nonGiftVoucherReducibleSubTotal - giftVoucherReduction;
+        }
+
+        private static decimal CalculatePrice(LineItem l)
+        {
+            return l.Item.Price * l.Quantity;
         }
     }
 }

@@ -56,5 +56,15 @@ namespace BasketTest.UnitTests
 
             _target.Total.Should().Be(0);
         }
+
+        [Test]
+        public void Gift_voucher_does_not_reduce_price_of_gift_voucher()
+        {
+            _target.Add(new LineItem(new GiftVoucher("ABC", 25m)));
+
+            _target.Apply(new GiftVoucher("XXX", 10m));
+
+            _target.Total.Should().Be(25m);
+        }
     }
 }
